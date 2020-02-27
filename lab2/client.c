@@ -16,6 +16,7 @@
 #define PASSWORD "password"
 #define COMMON_NAME "Bob's Server"
 #define CIPHER "SHA1"
+#define SERVER_EMAIL "ece568bob@ecf.utoronto.ca"
 
 /* use these strings to tell the marker what is happening */
 #define FMT_CONNECT_ERR "ECE568-CLIENT: SSL connect error\n"
@@ -99,7 +100,8 @@ int main(int argc, char **argv)
 	berr_exit(FMT_CONNECT_ERR);
   }
 
-  /* SSL connection established */
+  /* check certificate */
+  check_certificate(ssl, COMMON_NAME, SERVER_EMAIL);
 
 
   /* this is how you output something for the marker to pick up */
