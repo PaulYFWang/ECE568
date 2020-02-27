@@ -4,7 +4,7 @@ LIBS := -lssl -lcrypto
 LDFLAGS := $(LIBS)
 RM := rm -f
 
-sources := client.c server.c sslhelpers.c
+sources := sslhelpers.c client.c server.c 
 targets := client server 
 
 .PHONY: clean default all
