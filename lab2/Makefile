@@ -5,7 +5,7 @@ LDFLAGS := $(LIBS)
 RM := rm -f
 
 sources := client.c server.c sslhelpers.c
-targets := client server sslhelpers
+targets := client server 
 
 .PHONY: clean default all
 
@@ -14,13 +14,10 @@ all: $(targets)
 
 
 client: client.o
-	$(CC) $(LDFLAGS) -o client client.o
+	$(CC) $(LDFLAGS) -o client client.o sslhelpers.o
 
 server: server.o
-	$(CC) $(LDFLAGS) -o server server.o
-
-sslhelpers: sslhelpers.o
-	$(CC) $(LDFLAGS) -o sslhelpers sslhelpers.o
+	$(CC) $(LDFLAGS) -o server server.o sslhelpers.o
 
 client.o: client.c
 	$(CC) $(CFLAGS) -c -o client.o client.c
