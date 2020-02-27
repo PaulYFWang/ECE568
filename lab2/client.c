@@ -7,7 +7,7 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include "/usr/include/openssl/ssl.h"
+#include <openssl/ssl.h>
 
 #define HOST "localhost"
 #define PORT 8765
@@ -87,7 +87,7 @@ int main(int argc, char **argv)
   ctx = NULL;
 
   SSL *ssl;
-  SBIO *sbio;
+  BIO *sbio;
 
   ssl = SSL_new(ctx);
   sbio = BIO_new_socket(sock, BIO_NOCLOSE); 
