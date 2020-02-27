@@ -12,6 +12,7 @@ targets := client server
 default: all
 all: $(targets)
 
+
 client: client.o
 	$(CC) $(LDFLAGS) -o client client.o
 

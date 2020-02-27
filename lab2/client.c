@@ -7,6 +7,7 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include "/usr/include/openssl/ssl.h"
 
 #define HOST "localhost"
 #define PORT 8765
@@ -32,6 +33,7 @@ int main(int argc, char **argv)
   struct hostent *host_entry;
   char buf[256];
   char *secret = "What's the question?";
+  SSL_CTX *ctx;
   
   /*Parse command line arguments*/
   
@@ -82,7 +84,7 @@ int main(int argc, char **argv)
   /* connect to SSL */
   
   /* set up the context and make and set the options to use the correct protocols*/
-  ctx =
+  ctx = NULL;
 
   SSL *ssl;
   SBIO *sbio;
