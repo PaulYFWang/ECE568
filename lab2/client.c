@@ -7,7 +7,7 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include "/usr/include/openssl/ssl.h"
+#include <openssl/ssl.h>
 
 #define HOST "localhost"
 #define PORT 8765
@@ -15,6 +15,7 @@
 #define CLIENT_KEY "alice.pem"
 #define PASSWORD "password"
 #define COMMON_NAME "Bob's Server"
+#define CIPHER "SHA1"
 
 /* use these strings to tell the marker what is happening */
 #define FMT_CONNECT_ERR "ECE568-CLIENT: SSL connect error\n"
@@ -84,7 +85,8 @@ int main(int argc, char **argv)
   /* connect to SSL */
   
   /* set up the context and make and set the options to use the correct protocols*/
-  ctx = NULL;
+  ctx = initialize_ctx(CLIENT_KEY, PASSWORD);
+  SSL_CTX_set_cipher_list(ctx,CIPHER);
 
   SSL *ssl;
   BIO *sbio;
