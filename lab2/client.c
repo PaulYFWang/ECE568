@@ -86,6 +86,7 @@ int main(int argc, char **argv)
   
   /* set up the context and make and set the options to use the correct protocols*/
   ctx = initialize_ctx(CLIENT_KEY, PASSWORD);
+  SSL_CTX_set_options(ctx, SSL_OP_NO_SSLv2);
   SSL_CTX_set_cipher_list(ctx,CIPHER);
 
   SSL *ssl;
