@@ -164,7 +164,7 @@ int main(int argc, char **argv)
       sbio = BIO_new_socket(s, BIO_NOCLOSE);
       SSL_set_bio(ssl, sbio, sbio);
 
-      if (r=SSL_accept(ssl) <= 0) {
+      if (int r=SSL_accept(ssl) <= 0) {
         berr_exit(FMT_ACCEPT_ERR);
       }
 
