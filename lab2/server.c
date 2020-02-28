@@ -35,22 +35,22 @@ void check_certificate(SSL *ssl, char *common_name, char * server_email){
 	
 	/* verify certificate */
 	if(SSL_get_verify_result(ssl) != X509_V_OK){
-		berr_exit(FMT_NO_VERIFY);
+		berr_exit(FMT_ACCEPT_ERR);
 	}
 	
 	peer_cert = SSL_get_peer_certificate(ssl);
 	
 	/* check common name */
 	X509_NAME_get_text_by_NID(X509_get_subject_name(peer_cert), NID_commonName, peer_CN, BUFFER_SIZE);
-	if(strcasecmp(peer_CN, common_name)){
+	/*if(strcasecmp(peer_CN, common_name)){
 		err_exit(FMT_CN_MISMATCH);
-	}
+	}*/
 	
 	/* check server email */
 	X509_NAME_get_text_by_NID(X509_get_subject_name(peer_cert), NID_pkcs9_emailAddress, peer_email, BUFFER_SIZE);
-	if(strcasecmp(peer_email, server_email)){
+	/*if(strcasecmp(peer_email, server_email)){
 		err_exit(FMT_EMAIL_MISMATCH);
-	}
+	}*/
 	
 	printf(FMT_CLIENT_INFO, peer_CN, peer_email);
 }
@@ -125,7 +125,6 @@ int main(int argc, char **argv)
       int len;
       char buf[256];
       char *answer = "42";
-
       len = recv(s, &buf, 255, 0);
       buf[len]= '\0';
       printf(FMT_OUTPUT, buf, answer);
