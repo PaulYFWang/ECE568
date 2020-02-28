@@ -17,6 +17,7 @@
 #define COMMON_NAME "Bob's Server"
 #define CIPHER "SHA1"
 #define SERVER_EMAIL "ece568bob@ecf.utoronto.ca"
+#define BUFSIZZ 256
 
 /* use these strings to tell the marker what is happening */
 #define FMT_CONNECT_ERR "ECE568-CLIENT: SSL connect error\n"
