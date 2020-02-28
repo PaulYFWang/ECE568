@@ -27,10 +27,27 @@
 #define FMT_NO_VERIFY "ECE568-CLIENT: Certificate does not verify\n"
 #define FMT_INCORRECT_CLOSE "ECE568-CLIENT: Premature close\n"
 
-void closeSSL(){
+void closeSSLConnection(int sock, SSL *ssl){
+
   //implement handling of the ssl shutdown and ssl free check the return result of ssl shutdown
-  
+  r = SSL_shutdown(ssl);
+  if(!r) {
+    /* If we called SSL_shutdown() first then
+     we always get return value of '0'. In
+     this case, try again, but first send a
+     TCP FIN to trigger the other side's
+     close_notify*/
+    shutdown(sock, 1);
+    r = SSL_shutdown(ssl);
+  }
+
+  if (r!=1)
+    err_exit(FMT_INCORRECT_CLOSE);
+
+  SSL_free(ssl);
+  close(sock);
 }
+
 void check_certificate(SSL *ssl, char *common_name, char * server_email){
 	// this function is based off of the check_cert function from https://www.linuxjournal.com/files/linuxjournal.com/linuxjournal/articles/048/4822/4822l2.html
 	X509 *peer_cert;
