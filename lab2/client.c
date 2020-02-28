@@ -63,6 +63,31 @@ void check_certificate(SSL *ssl, char *common_name, char * server_email){
 	printf(FMT_SERVER_INFO, peer_CN, peer_email, cert_issuer);
 }
 
+void read_write(SSL *ssl, char *secret, char *output){
+	/* write request */
+	int write_res;
+	
+	write_res = SSL_write(ssl, secret, strlen(secret));
+	switch(SSL_get_error(ssl, write_res)){
+		case SSL_ERROR_NONE:
+			if(strlen(secret) != write_res){
+				err_exit("SSL write was not completed");
+			}
+			break;
+		default:
+			berr_exit("SSL write encountered problem");
+	}
+	
+	/* read response */
+	int read_res;
+	read_res = SSL_read(ssl, output, BUFSIZZ);
+	if(read_res < 0){
+		berr_exit("SSL read encountered problem");
+	}
+	
+	output[read_res] = '\0';
+}
+
 int main(int argc, char **argv)
 {
   int len, sock, port=PORT;
@@ -140,7 +165,9 @@ int main(int argc, char **argv)
   /* check certificate */
   check_certificate(ssl, COMMON_NAME, SERVER_EMAIL);
 
-
+  /* handle SSL read and write */
+  read_write(ssl, secret, buf);
+  
   /* this is how you output something for the marker to pick up */
   printf(FMT_OUTPUT, secret, buf);
   
