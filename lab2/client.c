@@ -17,7 +17,7 @@
 #define COMMON_NAME "Bob's Server"
 #define CIPHER "SHA1"
 #define SERVER_EMAIL "ece568bob@ecf.utoronto.ca"
-#define BUFSIZZ 256
+#define BUFFER_SIZE 256
 
 /* use these strings to tell the marker what is happening */
 #define FMT_CONNECT_ERR "ECE568-CLIENT: SSL connect error\n"
@@ -52,9 +52,9 @@ void closeSSLConnection(int sock, SSL *ssl){
 void check_certificate(SSL *ssl, char *common_name, char * server_email){
 	// this function is based off of the check_cert function from https://www.linuxjournal.com/files/linuxjournal.com/linuxjournal/articles/048/4822/4822l2.html
 	X509 *peer_cert;
-	char peer_CN[256];
-	char peer_email[256];
-	char cert_issuer[256];
+	char peer_CN[BUFFER_SIZE];
+	char peer_email[BUFFER_SIZE];
+	char cert_issuer[BUFFER_SIZE];
 	
 	/* verify certificate */
 	if(SSL_get_verify_result(ssl) != X509_V_OK){
@@ -64,19 +64,19 @@ void check_certificate(SSL *ssl, char *common_name, char * server_email){
 	peer_cert = SSL_get_peer_certificate(ssl);
 	
 	/* check common name */
-	X509_NAME_get_text_by_NID(X509_get_subject_name(peer_cert), NID_commonName, peer_CN, 256);
+	X509_NAME_get_text_by_NID(X509_get_subject_name(peer_cert), NID_commonName, peer_CN, BUFFER_SIZE);
 	if(strcasecmp(peer_CN, common_name)){
 		err_exit(FMT_CN_MISMATCH);
 	}
 	
 	/* check server email */
-	X509_NAME_get_text_by_NID(X509_get_subject_name(peer_cert), NID_pkcs9_emailAddress, peer_email, 256);
+	X509_NAME_get_text_by_NID(X509_get_subject_name(peer_cert), NID_pkcs9_emailAddress, peer_email, BUFFER_SIZE);
 	if(strcasecmp(peer_email, server_email)){
 		err_exit(FMT_EMAIL_MISMATCH);
 	}
 	
 	/* get certificate issuer */
-	X509_NAME_get_text_by_NID(X509_get_issuer_name(peer_cert), NID_commonName, cert_issuer, 256);
+	X509_NAME_get_text_by_NID(X509_get_issuer_name(peer_cert), NID_commonName, cert_issuer, BUFFER_SIZE);
 	
 	printf(FMT_SERVER_INFO, peer_CN, peer_email, cert_issuer);
 }
@@ -98,7 +98,7 @@ void read_write(SSL *ssl, char *secret, char *output){
 	
 	/* read response */
 	int read_res;
-	read_res = SSL_read(ssl, output, BUFSIZZ);
+	read_res = SSL_read(ssl, output, BUFFER_SIZE);
 	if(read_res < 0){
 		berr_exit("SSL read encountered problem");
 	}
