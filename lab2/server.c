@@ -7,6 +7,7 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include "sslhelpers.h"
 
 #define PORT 8765
 
@@ -103,7 +104,8 @@ int main(int argc, char **argv)
     close(sock);
     exit (0);
   } 
-  
+
+  SSL_CTX *ctx = initialize_ctx(SERVER_KEY, PASSWORD);
   
   
   while(1){
