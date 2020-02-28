@@ -157,9 +157,9 @@ int main(int argc, char **argv)
   if(connect(sock,(struct sockaddr *)&addr, sizeof(addr))<0)
     perror("connect");
   
-  send(sock, secret, strlen(secret),0);
+  /*send(sock, secret, strlen(secret),0);
   len = recv(sock, &buf, 255, 0);
-  buf[len]='\0';
+  buf[len]='\0';*/
   
   /* connected to TCP socket */
   /* connect to SSL */
