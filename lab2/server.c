@@ -42,8 +42,7 @@ void closeSSLConnection(int sock, SSL *ssl){
   }
 
   if (r!=1)
-    err_exit(FMT_INCORRECT_CLOSE);
-
+    err_exit(FMT_INCOMPLETE_CLOSE);
   SSL_free(ssl);
   close(sock);
 }
@@ -193,7 +192,7 @@ int main(int argc, char **argv)
       read_write(ssl, answer, buf);
       
       closeSSLConnection(sock, ssl);
-	  close(s);
+	     close(s);
       return 0;
     }
   }
