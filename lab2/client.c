@@ -188,6 +188,7 @@ int main(int argc, char **argv)
   
   /* this is how you output something for the marker to pick up */
   printf(FMT_OUTPUT, secret, buf);
+  printf("Testing");
   
   closeSSLConnection(sock, ssl);
   return 1;
