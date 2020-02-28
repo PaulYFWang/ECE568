@@ -30,7 +30,7 @@
 void closeSSLConnection(int sock, SSL *ssl){
 
   //implement handling of the ssl shutdown and ssl free check the return result of ssl shutdown
-  r = SSL_shutdown(ssl);
+  int r = SSL_shutdown(ssl);
   if(!r) {
     /* If we called SSL_shutdown() first then
      we always get return value of '0'. In
@@ -188,7 +188,7 @@ int main(int argc, char **argv)
   /* this is how you output something for the marker to pick up */
   printf(FMT_OUTPUT, secret, buf);
   
-  close(sock);
+  closeSSLConnection(sock, ssl);
   return 1;
 }
 
