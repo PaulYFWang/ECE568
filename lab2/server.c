@@ -96,8 +96,8 @@ void read_write(SSL *ssl, char *answer, char *output){
 		case SSL_ERROR_NONE:
 			if(strlen(answer) != write_res){
 				err_exit("SSL write was not completed");
-				break;
 			}
+      break;
 		default:
       printf("Error code %d\n", errCode);
 			berr_exit("SSL write encountered error" );
