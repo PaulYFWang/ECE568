@@ -27,6 +27,42 @@
 #define FMT_NO_VERIFY "ECE568-CLIENT: Certificate does not verify\n"
 #define FMT_INCORRECT_CLOSE "ECE568-CLIENT: Premature close\n"
 
+void closeSSL(){
+  //implement handling of the ssl shutdown and ssl free check the return result of ssl shutdown
+  
+}
+void check_certificate(SSL *ssl, char *common_name, char * server_email){
+	// this function is based off of the check_cert function from https://www.linuxjournal.com/files/linuxjournal.com/linuxjournal/articles/048/4822/4822l2.html
+	X509 *peer_cert;
+	char peer_CN[256];
+	char peer_email[256];
+	char cert_issuer[256];
+	
+	/* verify certificate */
+	if(SSL_get_verify_result(ssl) != X509_V_OK){
+		berr_exit(FMT_NO_VERIFY);
+	}
+	
+	peer_cert = SSL_get_peer_certificate(ssl);
+	
+	/* check common name */
+	X509_NAME_get_text_by_NID(X509_get_subject_name(peer_cert), NID_commonName, peer_CN, 256);
+	if(strcasecmp(peer_CN, common_name)){
+		err_exit(FMT_CN_MISMATCH);
+	}
+	
+	/* check server email */
+	X509_NAME_get_text_by_NID(X509_get_subject_name(peer_cert), NID_pkcs9_emailAddress, peer_email, 256);
+	if(strcasecmp(peer_email, server_email)){
+		err_exit(FMT_EMAIL_MISMATCH);
+	}
+	
+	/* get certificate issuer */
+	X509_NAME_get_text_by_NID(X509_get_issuer_name(peer_cert), NID_commonName, cert_issuer, 256);
+	
+	printf(FMT_SERVER_INFO, peer_CN, peer_email, cert_issuer);
+}
+
 int main(int argc, char **argv)
 {
   int len, sock, port=PORT;
@@ -112,38 +148,4 @@ int main(int argc, char **argv)
   return 1;
 }
 
-void closeSSL(){
-  //implement handling of the ssl shutdown and ssl free check the return result of ssl shutdown
-  
-}
-void check_certificate(SSL *ssl, char *common_name, char * server_email){
-	// this function is based off of the check_cert function from https://www.linuxjournal.com/files/linuxjournal.com/linuxjournal/articles/048/4822/4822l2.html
-	X509 *peer_cert;
-	char peer_CN[256];
-	char peer_email[256];
-	char cert_issuer[256];
-	
-	/* verify certificate */
-	if(SSL_get_verify_result(ssl) != X509_V_OK){
-		berr_exit(FMT_NO_VERIFY);
-	}
-	
-	peer_cert = SSL_get_peer_certificate(ssl);
-	
-	/* check common name */
-	X509_NAME_get_text_by_NID(X509_get_subject_name(peer_cert), NID_commonName, peer_CN, 256);
-	if(strcasecmp(peer_CN, common_name)){
-		err_exit(FMT_CN_MISMATCH);
-	}
-	
-	/* check server email */
-	X509_NAME_get_text_by_NID(X509_get_subject_name(peer_cert), NID_pkcs9_emailAddress, peer_email, 256);
-	if(strcasecmp(peer_email, server_email)){
-		err_exit(FMT_EMAIL_MISMATCH);
-	}
-	
-	/* get certificate issuer */
-	X509_NAME_get_text_by_NID(X509_get_issuer_name(peer_cert), NID_commonName, cert_issuer, 256);
-	
-	printf(FMT_SERVER_INFO, peer_CN, peer_email, cert_issuer);
-}
+
