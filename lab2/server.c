@@ -16,6 +16,45 @@
 #define FMT_OUTPUT "ECE568-SERVER: %s %s\n"
 #define FMT_INCOMPLETE_CLOSE "ECE568-SERVER: Incomplete shutdown\n"
 
+#define HOST "localhost"
+#define PORT 8765
+#define CA_PUBLIC "568ca.pem"
+#define SERVER_KEY "bob.pem"
+#define PASSWORD "password"
+#define COMMON_NAME "Alice's Client"
+#define CIPHER "SHA1"
+#define SERVER_EMAIL "ece568alice@ecf.utoronto.ca"
+#define BUFFER_SIZE 256
+
+void check_certificate(SSL *ssl, char *common_name, char * server_email){
+	// this function is based off of the check_cert function from https://www.linuxjournal.com/files/linuxjournal.com/linuxjournal/articles/048/4822/4822l2.html
+	X509 *peer_cert;
+	char peer_CN[BUFFER_SIZE];
+	char peer_email[BUFFER_SIZE];
+	char cert_issuer[BUFFER_SIZE];
+	
+	/* verify certificate */
+	if(SSL_get_verify_result(ssl) != X509_V_OK){
+		berr_exit(FMT_NO_VERIFY);
+	}
+	
+	peer_cert = SSL_get_peer_certificate(ssl);
+	
+	/* check common name */
+	X509_NAME_get_text_by_NID(X509_get_subject_name(peer_cert), NID_commonName, peer_CN, BUFFER_SIZE);
+	if(strcasecmp(peer_CN, common_name)){
+		err_exit(FMT_CN_MISMATCH);
+	}
+	
+	/* check server email */
+	X509_NAME_get_text_by_NID(X509_get_subject_name(peer_cert), NID_pkcs9_emailAddress, peer_email, BUFFER_SIZE);
+	if(strcasecmp(peer_email, server_email)){
+		err_exit(FMT_EMAIL_MISMATCH);
+	}
+	
+	printf(FMT_CLIENT_INFO, peer_CN, peer_email);
+}
+
 int main(int argc, char **argv)
 {
   int s, sock, port=PORT;
@@ -64,6 +103,8 @@ int main(int argc, char **argv)
     close(sock);
     exit (0);
   } 
+  
+  
   
   while(1){
     
