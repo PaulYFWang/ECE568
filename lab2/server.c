@@ -89,6 +89,10 @@ int main(int argc, char **argv)
   struct sockaddr_in sin;
   int val=1;
   pid_t pid;
+
+  SSL_CTX *ctx;
+  SSL *ssl;
+  BIO *sbio;
   
   /*Parse command line arguments*/
   
@@ -132,8 +136,9 @@ int main(int argc, char **argv)
     exit (0);
   } 
 
-  SSL_CTX *ctx = initialize_ctx(SERVER_KEY, PASSWORD);
-  
+  ctx = initialize_ctx(SERVER_KEY, PASSWORD);
+  SSL_CTX_set_verify(ctx,SSL_VERIFY_PEER|SSL_VERIFY_CLIENT_ONCE|SSL_VERIFY_FAIL_IF_NO_PEER_CERT,
+      NULL);
   
   while(1){
     
@@ -154,13 +159,17 @@ int main(int argc, char **argv)
       int len;
       char buf[256];
       char *answer = "42";
-	  
-	  read_write(ssl, answer, buf);
-      /*len = recv(s, &buf, 255, 0);
-      buf[len]= '\0'; 
-      printf(FMT_OUTPUT, buf, answer);
-      send(s, answer, strlen(answer), 0);
-	  */
+
+      ssl = SSL_new(ctx);
+      sbio = BIO_new_socket(s, BIO_NOCLOSE);
+      SSL_set_bio(ssl, sbio, sbio);
+
+      if (r=SSL_accept(ssl) <= 0) {
+        berr_exit(FMT_ACCEPT_ERR);
+      }
+
+      read_write(ssl, answer, buf);
+      
       close(sock);
       close(s);
       return 0;
