@@ -56,6 +56,33 @@ void check_certificate(SSL *ssl, char *common_name, char * server_email){
 	printf(FMT_CLIENT_INFO, peer_CN, peer_email);
 }
 
+void read_write(SSL *ssl, char *answer, char *output){
+	/* check certificate */
+	check_certificate(ssl, COMMON_NAME, SERVER_EMAIL);
+	
+	int read_res = SSL_read(ssl, output, BUFFER_SIZE);
+	
+	if(read_res < 0){
+		berr_exit("SSL read encountered problems");
+	}
+	
+	output[read_res] = '\0';
+	
+	printf(FMT_OUTPUT, output, answer);
+	
+	int write_res = SSL_write(ssl, answer, strlen(answer));
+	
+	switch(SSL_get_error(ssl, write_res)) {
+		case SSL_ERROR_NONE:
+			if(strlen(answer) != write_res){
+				err_exit("SSL write was not completed");
+				break;
+			}
+		default:
+			berr_exit("SSL write encountered error");
+	}
+}
+
 int main(int argc, char **argv)
 {
   int s, sock, port=PORT;
@@ -127,10 +154,13 @@ int main(int argc, char **argv)
       int len;
       char buf[256];
       char *answer = "42";
-      len = recv(s, &buf, 255, 0);
-      buf[len]= '\0';
+	  
+	  read_write(ssl, answer, buf);
+      /*len = recv(s, &buf, 255, 0);
+      buf[len]= '\0'; 
       printf(FMT_OUTPUT, buf, answer);
       send(s, answer, strlen(answer), 0);
+	  */
       close(sock);
       close(s);
       return 0;
