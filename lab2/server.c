@@ -71,15 +71,16 @@ void read_write(SSL *ssl, char *answer, char *output){
 	printf(FMT_OUTPUT, output, answer);
 	
 	int write_res = SSL_write(ssl, answer, strlen(answer));
-	
-	switch(SSL_get_error(ssl, write_res)) {
+	int errCode = SSL_get_error(ssl, write_res);
+	switch(errCode) {
 		case SSL_ERROR_NONE:
 			if(strlen(answer) != write_res){
 				err_exit("SSL write was not completed");
 				break;
 			}
 		default:
-			berr_exit("SSL write encountered error");
+      printf("Error code %d\n", errCode);
+			berr_exit("SSL write encountered error" );
 	}
 }
 
