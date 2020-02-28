@@ -38,7 +38,6 @@ void closeSSLConnection(int sock, SSL *ssl){
      this case, try again, but first send a
      TCP FIN to trigger the other side's
      close_notify*/
-    printf("First close did not work");
     shutdown(sock, SHUT_WR);
     r = SSL_shutdown(ssl);
   }
@@ -189,7 +188,6 @@ int main(int argc, char **argv)
   
   /* this is how you output something for the marker to pick up */
   printf(FMT_OUTPUT, secret, buf);
-  printf("Testing");
   
   closeSSLConnection(sock, ssl);
   return 1;

@@ -99,7 +99,6 @@ void read_write(SSL *ssl, char *answer, char *output){
 			}
       break;
 		default:
-      printf("Error code %d\n", errCode);
 			berr_exit("SSL write encountered error" );
 	}
 }
