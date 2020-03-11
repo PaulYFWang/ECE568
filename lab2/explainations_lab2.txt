@@ -1,0 +1,8 @@
+#Yifan Wang, 1002421480, paulyf.wang@mail.utoronto.ca
+#Yudong Feng, 1002587523, yudong.feng@mail.utoronto.ca
+
+Client
+Following the tutorial reference provided at https://www.linuxjournal.com/article/4822, we first had to initialize the context, which was done by extracting the functions (initialize_ctx) necessary to another file, the sslhelpers.c file. Initialize context loads the trusted CAs, private keys and certificates. It also sets the password as well as specify the method versions of SSL/TLS to create the context. Using SSL_CTX_set_options on client, we can further set specific protocol versions (in this case to use SSLv3). Then using SSL_CTX_set_cipher_list command, we set the used ciphers to only SHA1. After, we initiate the SSL connection with error handling. The recived certificate is then verified, on Common name, and email address. These are printed along with the certificate issuer client-side. After this, the function read_write handles the SSL read and write operations. The final output is printed assuming no errors and the connection closes gracefully via SSL_shutdown / SSL_free.
+
+Server
+The server uses the shared initialize_ctx function mentioned above in server. The SSL_CTX_set_verify is used to set verification options on the server. After on the server, it responds to incoming SSL connection requests by forking a new thread to handle it. After it completes the handshake, it does read/write operations via the read_write function. read_write verifies certificate and prints the CN/email of the requestor. After communications complete the thread gracefully closes connection and exits.
