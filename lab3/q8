@@ -1,0 +1,1 @@
+101 and exists(select * from credit where cc_number = 1234123412341234 and pin = 4862)
