@@ -18,3 +18,26 @@ dns_port = args.dns_port
 # Flag to indicate if the proxy should spoof responses
 SPOOF = args.spoof_response
 
+BUFSIZE = 1024
+
+#UDP Socket
+dns_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+
+#Bind to dns port
+dns_socket.connect(("localhost",dns_port))
+
+#UDP Socket
+proxy_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+
+#Bind to proxy port
+proxy_socket.connect(("localhost",port))
+print("Hello")
+while 1:
+	message = proxy_socket.recv(BUFSIZE)
+	print(message)
+	dns_socket.send(message)
+	res = dns_socket.recv(BUFSIZE)
+	print(res)
+	
+
+
