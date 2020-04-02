@@ -32,10 +32,10 @@ Part 3 Explanation:
 The message field is exploited in this part. An image with src containting the url for the transfer request is injected in the message field and the image size is minimized to avoid detection. When the user clicks the url, the fund gets transferred.
 
 Part 4 Explanation:
-This part also exploits the message field. However, this time there is a confirmation required. Since the confirmation url is static, we just needs to inject two images with the correct src to get this to work.
+This part also exploits the message field. However, this time there is a confirmation required. To bypass the confirmation, we used two iframes. The first iframe contains the transfer url and onload, it sets the url of the second iframe to confirm the transfer. To make the iframes not too apparent, the width and height were set to 1.
 
 Part 5 Explanation:
-This part also exploits the message field. Unlike part 4, the second url contains a token which makes it dynamic. Two iframes were used: the first iframe contains the src with transfer=main, the second iframe contains no src initially. When the first iframe loads, an onload function is called to fetch the hidden token value and then the src of the second iframe is constructed using the fetched token value. This allows the token by-pass to be defeated.
+This part also exploits the message field. Unlike part 4, the second url contains a token which makes it dynamic. Two iframes were used: the first iframe contains the src with transfer=main, the second iframe contains no src initially. When the first iframe loads, an onload function is called to fetch the hidden token value and then the src of the second iframe is constructed using the fetched token value. This allows the token by-pass to be defeated. To make the iframes not too apparent, the width and height were set to 1.
 
 Part 6 Explanation:
 We exploited unsanitized input for this SQL injection. By setting a' or 1=1 -- into our input field, we effectively changed the condition from select * from user_data where last_name = a into select *  from user_data where last_name = a OR 1=1, which will return the entire table since our condition 1=1 will return true every time. The -- at the end is to comment out the ending ' mark used to close off the expected string input and ensure our injection does not error out.
