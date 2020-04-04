@@ -1,0 +1,11 @@
+#Yi Wang, 1002421480, paulyf.wang@mail.utoronto.ca
+#Yudong Feng, 1002587523, yudong.feng@mail.utoronto.ca
+
+Part 1 Explanation:
+Found info by runnning dig utoronto.ca for questions 1 and 2. For question 3, we first used dig utoronto.ca MX to look for mail exchange answers. We found utoronto-ca.mail.protection.outlook.com as the result. Then we used dig utoronto-ca.mail.protection.outlook.com to then find the actual IPs in the Answer Section. In order to ask the BIND server we used the command dig @127.0.0.1 utoronto.ca -p 32000, as our BIND server was running on port 32000. The results were the same.
+
+Part 2 and 3 Explanation:
+To do this we needed to create 2 sockets, one for the BIND server and one for the proxy. The flow was that the dig command sends a request to the proxy, which then forwards the request to the BIND server. Upon receiving the response from the BIND server, the proxy modifies the IPv4 address and name servers to our desired ns.dnslabattacker.net/ 1.2.3.4 before finally sending the compromised DNS response back to dig.
+
+Part 4 Explanation:
+We first create a DNS query with a random domain name prefix and send it to the BIND server. After this, we send a plethora of spoofed DNS packets with a random transaction ID to the BIND server. We do this in hopes of the random transaction ID matching a valid ID, giving us the ability to overwrite the ns with a fake new value. We also needed to pad the spoofed DNS packets with placeholder rdata addresses.
